@@ -1,0 +1,131 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  timezone  String
+  currency  String
+  payment_provider_key String?
+
+  tables       Table[]
+  categories   Category[]
+  menus        Menu[]
+  reservations Reservation[]
+  orders       Order[]
+  users        User[]
+}
+
+model Table {
+  id        String   @id @default(cuid())
+  tenantId  String
+  number    Int
+  seats     Int
+  qrCodeId  String?
+
+  tenant     Tenant  @relation(fields: [tenantId], references: [id])
+  reservations Reservation[]
+  orders      Order[]
+}
+
+model Reservation {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tableId    String
+  userId     String?
+  name       String
+  phone      String
+  people     Int
+  reservationTime DateTime
+  status     String
+
+  tenant  Tenant  @relation(fields: [tenantId], references: [id])
+  table   Table   @relation(fields: [tableId], references: [id])
+  user    User?   @relation(fields: [userId], references: [id])
+  orders  Order[]
+}
+
+model User {
+  id          String   @id @default(cuid())
+  tenantId    String
+  role        String
+  email       String   @unique
+  passwordHash String
+
+  tenant       Tenant     @relation(fields: [tenantId], references: [id])
+  reservations Reservation[]
+  orders       Order[]
+}
+
+model Order {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tableId    String
+  reservationId String?
+  userId     String?
+  status     String
+  totalAmount Float
+  paymentStatus String
+  createdAt  DateTime @default(now())
+
+  tenant       Tenant      @relation(fields: [tenantId], references: [id])
+  table        Table       @relation(fields: [tableId], references: [id])
+  reservation  Reservation? @relation(fields: [reservationId], references: [id])
+  user         User?       @relation(fields: [userId], references: [id])
+  items        OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  menuItemId String
+  quantity   Int
+  notes      String?
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  menuItem  MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  sortOrder Int
+
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  menuItems  MenuItem[]
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  menuId      String
+  categoryId  String?
+  name        String
+  description String
+  price       Float
+  available   Boolean  @default(true) // se il piatto è disponibile ora
+  visible     Boolean  @default(true) // se deve essere mostrato nel menù
+  tags        String[]
+
+  menu        Menu     @relation(fields: [menuId], references: [id])
+  category    Category? @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model Menu {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String    // Es: "Cena", "Pranzo", "Speciale"
+  isActive   Boolean   // Se è quello attualmente visibile
+  createdAt  DateTime  @default(now())
+
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  items      MenuItem[]
+}
