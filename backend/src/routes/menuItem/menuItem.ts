@@ -99,4 +99,26 @@ menuItemRoute.put('/menu-item/visualization/:id', tenantLoader, async (req, res)
     }
 });
 
+menuItemRoute.delete('/menu-item/:id', tenantLoader, async (req, res) => {
+    
+    const menuItemId = req.params.id;
+
+    try {
+        const deletedMenuItem: MenuItem = await prisma.menuItem.delete({
+            where: { id: menuItemId }
+        });
+
+        if (!deletedMenuItem) {
+            res.status(404).json({ error: 'Menu item not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Deleted correctly the menuItem', deletedMenuItem });
+
+    } catch (error) {
+        console.error('Error deleting menu item:', error);
+        res.status(500).json({ error: 'Failed to delete menu item' });
+    }
+});
+
 export default menuItemRoute;
