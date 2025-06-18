@@ -95,7 +95,7 @@ model OrderItem {
   notes      String?
 
   order     Order    @relation(fields: [orderId], references: [id])
-  menuItem  MenuItem @relation(fields: [menuItemId], references: [id])
+  menuItem  MenuItem  @relation(name: "MenuItemToOrderItem", fields: [menuItemId], references: [id])
 }
 
 model Category {
@@ -107,30 +107,38 @@ model Category {
   tenant     Tenant    @relation(fields: [tenantId], references: [id])
   menuItems  MenuItem[]
 }
+model Menu {
+  id         String   @id @default(cuid())
+  tenantId   String
+  name       String
+  isActive   Boolean
+  createdAt  DateTime  @default(now())
+
+  tenant     Tenant    @relation(fields: [tenantId], references: [id])
+  menuItems  MenuItemsOnMenus[]
+}
 
 model MenuItem {
   id          String   @id @default(cuid())
-  menuId      String
   categoryId  String?
   name        String
   description String
   price       Float
-  available   Boolean  @default(true) // se il piatto è disponibile ora
-  visible     Boolean  @default(true) // se deve essere mostrato nel menù
+  available   Boolean  @default(true)
+  visible     Boolean  @default(true)
   tags        String[]
 
-  menu        Menu     @relation(fields: [menuId], references: [id])
   category    Category? @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]
+  orders      OrderItem[] @relation(name: "MenuItemToOrderItem")
+  menus       MenuItemsOnMenus[]
 }
 
-model Menu {
-  id         String   @id @default(cuid())
-  tenantId   String
-  name       String    // Es: "Cena", "Pranzo", "Speciale"
-  isActive   Boolean   // Se è quello attualmente visibile
-  createdAt  DateTime  @default(now())
+model MenuItemsOnMenus {
+  menuId     String
+  menuItemId String
 
-  tenant     Tenant    @relation(fields: [tenantId], references: [id])
-  items      MenuItem[]
+  menu       Menu      @relation(fields: [menuId], references: [id])
+  menuItem   MenuItem  @relation(fields: [menuItemId], references: [id])
+
+  @@id([menuId, menuItemId])
 }

@@ -1,0 +1,102 @@
+import { Router } from 'express';
+import { tenantLoader } from '../../middleware/tenantLoader/tenantLoader';
+import { MenuItem } from '@prisma/client';
+import { prisma } from '../../../prisma/client';
+import { MenuItemCreateBody } from './menuItem.types';
+
+const menuItemRoute = Router();
+
+menuItemRoute.post('/menu-item', tenantLoader, async (req, res) => {
+
+    const { name, description, price, visible, available, tags }: MenuItemCreateBody = req.body;
+
+    try {
+
+        const newMenuItem: MenuItem = await prisma.menuItem.create({
+            data: {
+                name,
+                description,
+                price,
+                visible,
+                available,
+                tags,
+            }
+        });
+
+        res.status(201).json(newMenuItem);
+    } catch (error) {
+        console.error('Error creating menu item:', error);
+        res.status(500).json({ error: 'Failed to create menu item' });
+    }
+});
+
+menuItemRoute.get('/menu-item', tenantLoader, async (req, res) => {});
+
+menuItemRoute.put('/menu-item/:id', tenantLoader, async (req, res) => {
+    
+    const menuItemId = req.params.id;
+    
+    const { name, description, price, visible, available, tags }: MenuItemCreateBody = req.body;
+
+    try {
+        const updatedMenuItem: MenuItem = await prisma.menuItem.update({
+            where: { id: menuItemId },
+            data: {
+                name,
+                description,
+                price,
+                visible,
+                available,
+                tags,
+            }
+        });
+
+        if (!updatedMenuItem) {
+            res.status(404).json({ error: 'Menu item not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Updated correctly the menuItem', updatedMenuItem});
+
+    } catch (error) {
+        console.error('Error updating menu item:', error);
+        res.status(500).json({ error: 'Failed to update menu item' });
+    }
+});
+
+menuItemRoute.put('/menu-item/visualization/:id', tenantLoader, async (req, res) => {
+    
+    const menuItemId = req.params.id;
+    
+    const { visible, available }: { visible?: boolean; available?: boolean } = req.body;
+    
+    try {
+        const updateData: any = {};
+
+        if(visible !== undefined) {
+            updateData.visible = visible;
+        }
+
+        if(available !== undefined) {
+            updateData.available = available;
+        }   
+
+        const updatedMenuItem: MenuItem = await prisma.menuItem.update({
+            where: { id: menuItemId },
+            data: updateData
+        });
+
+        if (!updatedMenuItem) {
+            res.status(404).json({ error: 'Menu item not found' });
+            return;
+        }
+
+        res.status(200).json({ message: 'Updated correctly the menuItem', updatedMenuItem});
+        
+    } catch (error) {
+        console.error('Error updating menu item:', error);
+        res.status(500).json({ error: 'Failed to update menu item' });
+    }
+});
+
+export default menuItemRoute;
