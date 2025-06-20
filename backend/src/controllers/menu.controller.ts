@@ -86,6 +86,50 @@ const menuController = {
     res.json({ menuResponse });
   },
 
+  createMenu: async (req: Request, res: Response) => {
+    const tenantReq = req as TenantRequest;
+  
+    const { name } = req.body;
+
+    if (!name || typeof name !== "string" || name.trim() === "") {
+      res.status(400).json({ error: "Invalid or missing menu name" });
+      return;
+    }
+
+    const existingMenu = await prisma.menu.findFirst({
+      where: {
+        tenantId: tenantReq.tenant.id,
+        name: name.trim(),
+      },
+    });
+
+    if (existingMenu) {
+      res.status(409).json({ error: "Menu with this name already exists" });
+      return;
+    }
+
+    const newMenu = await prisma.menu.create({
+      data: {
+        name: name.trim(),
+        tenantId: tenantReq.tenant.id,
+        isActive: false,
+      },
+    });
+
+    res.status(201).json({ message: "Menu created successfully", menuId: newMenu.id });
+  },
+
+  deleteMenu: async (req: Request, res: Response) => {
+    const tenantReq = req as TenantRequest;
+    const { menuIds }: { menuIds: string[]} = req.body;
+
+    await prisma.menu.deleteMany({
+      where: { tenantId: tenantReq.tenant.id, id: { in: menuIds } },
+    });
+
+    res.status(200).json({ message: "Menu deleted successfully" });
+  },
+
   addItemsToMenu: async (req: Request, res: Response) => {
     const tenantReq = req as TenantRequest;
     const { menuId } = req.params;
