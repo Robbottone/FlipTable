@@ -133,13 +133,10 @@ const menuController = {
       return;
     }
 
+    //la relazione tra menu e menuItemsOnMenus è una relazione on delete cascade, 
+    // quindi non è necessario cancellare manualmente gli elementi associati.
     await prisma.menu.deleteMany({
       where: { tenantId: tenantReq.tenant.id, id: { in: menuIds } },
-    });
-
-    //elimino tutti i collegamenti dei menuItems con quel menu
-    await prisma.menuItemsOnMenus.deleteMany({
-      where: { menuId: { in: menuIds } },
     });
 
     res.status(200).json({ message: "Menu deleted successfully" });

@@ -137,8 +137,8 @@ model MenuItemsOnMenus {
   menuId     String
   menuItemId String
 
-  menu       Menu      @relation(fields: [menuId], references: [id])
-  menuItem   MenuItem  @relation(fields: [menuItemId], references: [id])
+  menu       Menu      @relation(fields: [menuId], references: [id], onDelete: Cascade)
+  menuItem   MenuItem  @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 
   @@id([menuId, menuItemId])
 }

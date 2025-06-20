@@ -1,20 +1,21 @@
-import { connect } from "http2";
-
 const { PrismaClient } = require('@prisma/client');
+
 const prisma = new PrismaClient()
 
 async function main() {
 
-await prisma.menuItemsOnMenus.deleteMany()
-await prisma.menuItem.deleteMany()
-await prisma.menu.deleteMany()
-await prisma.category.deleteMany()
-await prisma.table.deleteMany()
-await prisma.reservation.deleteMany()
-await prisma.orderItem.deleteMany()
-await prisma.order.deleteMany()
-await prisma.user.deleteMany()
-await prisma.tenant.deleteMany()
+  console.log('Inizio il seed...')
+
+  await prisma.menuItemsOnMenus.deleteMany()
+  await prisma.menuItem.deleteMany()
+  await prisma.menu.deleteMany()
+  await prisma.category.deleteMany()
+  await prisma.table.deleteMany()
+  await prisma.reservation.deleteMany()
+  await prisma.orderItem.deleteMany()
+  await prisma.order.deleteMany()
+  await prisma.user.deleteMany()
+  await prisma.tenant.deleteMany()
 
   const tenant = await prisma.tenant.create({
     data: {
@@ -24,6 +25,8 @@ await prisma.tenant.deleteMany()
       currency: 'EUR',
     },
   })
+
+  console.log('Tenant creato:', tenant.name);
 
   const menu = await prisma.menu.create({
     data: {
