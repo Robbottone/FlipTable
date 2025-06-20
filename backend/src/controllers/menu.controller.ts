@@ -120,11 +120,26 @@ const menuController = {
   },
 
   deleteMenu: async (req: Request, res: Response) => {
+    
     const tenantReq = req as TenantRequest;
     const { menuIds }: { menuIds: string[]} = req.body;
 
+    if (
+      !Array.isArray(menuIds) ||
+      menuIds.length === 0 ||
+      !menuIds.every((id) => typeof id === "string")
+    ) {
+      res.status(400).json({ error: "Invalid or missing menuIds in body" });
+      return;
+    }
+
     await prisma.menu.deleteMany({
       where: { tenantId: tenantReq.tenant.id, id: { in: menuIds } },
+    });
+
+    //elimino tutti i collegamenti dei menuItems con quel menu
+    await prisma.menuItemsOnMenus.deleteMany({
+      where: { menuId: { in: menuIds } },
     });
 
     res.status(200).json({ message: "Menu deleted successfully" });
