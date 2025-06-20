@@ -14,7 +14,7 @@ CREATE TABLE "Tenant" (
 CREATE TABLE "Table" (
     "id" TEXT NOT NULL,
     "tenantId" TEXT NOT NULL,
-    "number" INTEGER NOT NULL,
+    "labelTable" TEXT NOT NULL,
     "seats" INTEGER NOT NULL,
     "qrCodeId" TEXT,
 
@@ -84,9 +84,19 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
+CREATE TABLE "Menu" (
+    "id" TEXT NOT NULL,
+    "tenantId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Menu_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "MenuItem" (
     "id" TEXT NOT NULL,
-    "menuId" TEXT NOT NULL,
     "categoryId" TEXT,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -99,14 +109,11 @@ CREATE TABLE "MenuItem" (
 );
 
 -- CreateTable
-CREATE TABLE "Menu" (
-    "id" TEXT NOT NULL,
-    "tenantId" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE "MenuItemsOnMenus" (
+    "menuId" TEXT NOT NULL,
+    "menuItemId" TEXT NOT NULL,
 
-    CONSTRAINT "Menu_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MenuItemsOnMenus_pkey" PRIMARY KEY ("menuId","menuItemId")
 );
 
 -- CreateIndex
@@ -152,10 +159,13 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_menuItemId_fkey" FOREIGN KEY (
 ALTER TABLE "Category" ADD CONSTRAINT "Category_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MenuItem" ADD CONSTRAINT "MenuItem_menuId_fkey" FOREIGN KEY ("menuId") REFERENCES "Menu"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Menu" ADD CONSTRAINT "Menu_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MenuItem" ADD CONSTRAINT "MenuItem_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Menu" ADD CONSTRAINT "Menu_tenantId_fkey" FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "MenuItemsOnMenus" ADD CONSTRAINT "MenuItemsOnMenus_menuId_fkey" FOREIGN KEY ("menuId") REFERENCES "Menu"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MenuItemsOnMenus" ADD CONSTRAINT "MenuItemsOnMenus_menuItemId_fkey" FOREIGN KEY ("menuItemId") REFERENCES "MenuItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -29,11 +29,11 @@ model Tenant {
 }
 
 model Table {
-  id        String   @id @default(cuid())
-  tenantId  String
-  number    Int
-  seats     Int
-  qrCodeId  String?
+  id           String   @id @default(cuid())
+  tenantId     String
+  labelTable   String
+  seats        Int
+  qrCodeId     String?
 
   tenant     Tenant  @relation(fields: [tenantId], references: [id])
   reservations Reservation[]

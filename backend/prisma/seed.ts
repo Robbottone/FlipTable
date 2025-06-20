@@ -100,10 +100,27 @@ async function main() {
   await prisma.table.create({
     data: {
       tenantId: tenant.id,
-      number: 1,
+      labelTable: "T0",
       seats: 4,
-    },
-  })
+    }
+  });
+  //     tenantId: tenant.id,
+  //     labelTable: "T1",
+  //     seats: 4,
+  //   },{
+  //     tenantId: tenant.id,
+  //     labelTable: "T2",
+  //     seats: 4,
+  //   },{
+  //     tenantId: tenant.id,
+  //     labelTable: "T3",
+  //     seats: 4,
+  //   },{
+  //     tenantId: tenant.id,
+  //     labelTable: "T4",
+  //     seats: 4,
+  //   }]
+  // });
 
   console.log('✅ Seed completato.')
 }
