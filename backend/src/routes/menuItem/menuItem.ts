@@ -1,15 +1,13 @@
 import { Router } from 'express';
 import { tenantLoader } from '../../middleware/tenantLoader/tenantLoader';
-import { createMenuItem, deleteMenuItem,  updateMenuItem, updateMenuItemVisibility } from './../../controllers/menuItem.controller';
+import menuItemController from './../../controllers/menuItem.controller';
 
 const menuItemRoute = Router();
 
-menuItemRoute.post('/menu-item', tenantLoader, createMenuItem);
-
-menuItemRoute.put('/menu-item/:id', tenantLoader, updateMenuItem);
-
-menuItemRoute.put('/menu-item/visualization/:id', tenantLoader, updateMenuItemVisibility);
-
-menuItemRoute.delete('/menu-item/:id', tenantLoader, deleteMenuItem);
+menuItemRoute.get('/menu-item', tenantLoader, menuItemController.getMenuItem);
+menuItemRoute.post('/menu-item', tenantLoader, menuItemController.createMenuItem);
+menuItemRoute.delete('/menu-item/:id', tenantLoader, menuItemController.deleteMenuItem);
+menuItemRoute.put('/menu-item/:id', tenantLoader, menuItemController.updateMenuItem);
+menuItemRoute.put('/menu-item/visualization/:id', tenantLoader, menuItemController.updateMenuItemVisibility);
 
 export default menuItemRoute;
