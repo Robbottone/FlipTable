@@ -4,7 +4,7 @@ web app useful to make an order directly from home or your table
 ## Avvio in sviluppo
 
 1. Assicurati di avere installato **Node.js** (versione 18 o superiore) e `npm`.
-2. Installa le dipendenze del progetto eseguendo, nella cartella principale e backend:
+2. Installa le dipendenze del progetto eseguendo, nella cartella principale:
 
    ```bash
    npm install
@@ -24,7 +24,7 @@ web app useful to make an order directly from home or your table
    PORT=3001
    ```
 
-5. Prepara il database ed esegui (opzionalmente) il seed iniziale:
+5. Prepara il database ed esegui (opzionalmente) il seed iniziale - installare postgreSQL 17.5 windows poi esegui i comandi dalla cartella /backend
 
    ```bash
    npx prisma migrate dev
@@ -44,3 +44,5 @@ web app useful to make an order directly from home or your table
    ```
 
 L'applicazione sarà accessibile su `http://localhost:3000` mentre l'API backend risponderà sulla porta `3001` (o quella impostata in `.env`).
+
+L'applicazione puo essere interrogata tramite POSTMAN con le query da importare da file in root di progetto.
