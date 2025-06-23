@@ -16,9 +16,11 @@ app.use(express.json())
 app.use('/api', menuRoute);
 app.use('/api', menuItemRoute);
 
-app.get('/ping', (req, res) => {
-    res.status(200).send('pong');
-})
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/ping', (req, res) => {
+      res.status(200).send('pong');
+  })
+}
 
 
 //da qui in poi devo importare le rotte.
