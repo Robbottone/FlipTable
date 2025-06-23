@@ -4,7 +4,7 @@ web app useful to make an order directly from home or your table
 ## Avvio in sviluppo
 
 1. Assicurati di avere installato **Node.js** (versione 18 o superiore) e `npm`.
-2. Installa le dipendenze del progetto eseguendo, nella cartella principale:
+2. Installa le dipendenze del progetto eseguendo, nella cartella principale e backend:
 
    ```bash
    npm install
