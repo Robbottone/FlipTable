@@ -24,6 +24,25 @@ web app useful to make an order directly from home or your table
    PORT=3001
    ```
 
+   In alternativa genera il tuo __DATABASE_URL__ su __Prisma Studio__:  
+   >    https://console.prisma.io
+   - crea un progetto
+   - vai nella sezione __database__
+   - vai sulla tab __setup__
+   - scegli __existing project__
+   - premi __Generate database credentials__
+   - copia il `DATABASE_URL` nel file `.env`
+   
+   Poi lancia il comando
+   ```bash
+   npx @prisma/ppg-tunnel --host 127.0.0.1 --port 52604
+   ```  
+   Ora sei connesso al db remoto.  
+   In aggiunta puoi collegarlo al tuo 3rd party database editors (TablePlus, Dbeaver ecc.)  
+   https://www.prisma.io/docs/postgres/database/tooling
+   
+
+
 5. Prepara il database ed esegui (opzionalmente) il seed iniziale - installare postgreSQL 17.5 windows poi esegui i comandi dalla cartella /backend
 
    ```bash
