@@ -62,13 +62,51 @@ const tableController = {
         }
 
         try {
+
+            //prima di fare l'update controllo se il tavolo ha il tableGroupId già associato
+            const existingTable = await prisma.table.findUnique({
+                where: {
+                    id: tableId,
+                    tenantId: tenantReq.tenant.id,
+                },
+            })
+
+            if (!existingTable) {
+                res.status(404).json({ error: "Table not found" });
+                return;
+            }
+
+            if (existingTable.tableGroupId === groupId) {
+                res.status(400).json({ error: "Table is already assigned to this group" });
+                return;
+            }
+
+            if (existingTable.tableGroupId !== null) {
+                //se il tavolo ha gia un gruppo associate, devo controllare se tutti i conti su quel tavolo sono pagati
+                const existingGroup = await prisma.tableGroup.findUnique({
+                    where: { groupId: existingTable.tableGroupId },
+                    include: {
+                        orders: true, // Include orders to check if any are unpaid
+                    },
+                });
+
+                //qui e' possibile che una nuova persona sposta il tavolo senza sapere che ci sono dei conti non pagati.
+                //potrebbe aver senso che se l'utente che chiama la API e' admin, allora puo' cancellare il vecchio gruppo
+                //altrimenti deve partire una notifica che avvisa admin del tavolo inconcluso.
+                //qui bisogna pensarci bene!!
+                if (existingGroup && existingGroup.orders.some(order => !order.isPaid)) {
+                    res.status(400).json({ error: "Cannot assign table to a new group, all orders must be paid first." });
+                    return;
+                }
+            }
+
             const updatedTable = await prisma.table.update({
                 where: {
                     id: tableId,
                     tenantId: tenantReq.tenant.id,
                 },
                 data: {
-                    tableGroupId: groupId || null, // Assign group ID or set to null
+                    tableGroupId: groupId, // Assign group ID or set to null
                 },
             });
 
