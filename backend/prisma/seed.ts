@@ -97,30 +97,37 @@ async function main() {
     ],
     });
 
-  await prisma.table.create({
-    data: {
+  await prisma.table.createMany({
+    data: [{
       tenantId: tenant.id,
-      labelTable: "T0",
+      labelTable: "T1",
       seats: 4,
-    }
+    },{
+      tenantId: tenant.id,
+      labelTable: "T2",
+      seats: 4,
+    },{
+      tenantId: tenant.id,
+      labelTable: "T3",
+      seats: 4,
+    },{
+      tenantId: tenant.id,
+      labelTable: "T4",
+      seats: 4,
+    },{
+      tenantId: tenant.id,
+      labelTable: "T5",
+      seats: 4,
+    },{
+      tenantId: tenant.id,
+      labelTable: "T6",
+      seats: 4,
+    },{
+      tenantId: tenant.id,
+      labelTable: "T7",
+      seats: 4,
+    }]
   });
-  //     tenantId: tenant.id,
-  //     labelTable: "T1",
-  //     seats: 4,
-  //   },{
-  //     tenantId: tenant.id,
-  //     labelTable: "T2",
-  //     seats: 4,
-  //   },{
-  //     tenantId: tenant.id,
-  //     labelTable: "T3",
-  //     seats: 4,
-  //   },{
-  //     tenantId: tenant.id,
-  //     labelTable: "T4",
-  //     seats: 4,
-  //   }]
-  // });
 
   console.log('✅ Seed completato.')
 }

@@ -26,6 +26,7 @@ model Tenant {
   reservations Reservation[]
   orders       Order[]
   users        User[]
+  tableGroups  TableGroup[]
 }
 
 model Table {
@@ -35,10 +36,24 @@ model Table {
   seats        Int
   qrCodeId     String?
 
-  tenant     Tenant  @relation(fields: [tenantId], references: [id])
-  reservations Reservation[]
-  orders      Order[]
+  tenant        Tenant  @relation(fields: [tenantId], references: [id])
+  reservations  Reservation[]
+
+  tableGroupId String?
+  tableGroups TableGroup? @relation(fields: [tableGroupId], references: [groupId])
 }
+
+model TableGroup {
+  groupId   String   @id @default(cuid())
+  tenantId  String
+  name      String
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  tables    Table[]  
+  orders    Order[]  // un gruppo può avere più ordini
+}
+
+
 
 model Reservation {
   id         String   @id @default(cuid())
@@ -70,20 +85,21 @@ model User {
 }
 
 model Order {
-  id         String   @id @default(cuid())
-  tenantId   String
-  tableId    String
-  reservationId String?
-  userId     String?
-  status     String
-  totalAmount Float
-  paymentStatus String
-  createdAt  DateTime @default(now())
+  id             String   @id @default(cuid())
+  tenantId       String
+  tableGroupId   String
+  reservationId  String?
+  userId         String?
+  status         String
+  totalAmount    Float
+  isPaid         Boolean @default(false)
+  notes          String?
+  createdAt      DateTime @default(now())
 
-  tenant       Tenant      @relation(fields: [tenantId], references: [id])
-  table        Table       @relation(fields: [tableId], references: [id])
+  tenant       Tenant       @relation(fields: [tenantId], references: [id])
   reservation  Reservation? @relation(fields: [reservationId], references: [id])
-  user         User?       @relation(fields: [userId], references: [id])
+  user         User?        @relation(fields: [userId], references: [id])
+  tableGroup   TableGroup   @relation(fields: [tableGroupId], references: [groupId])
   items        OrderItem[]
 }
 
