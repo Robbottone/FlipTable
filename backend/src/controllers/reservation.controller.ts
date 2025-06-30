@@ -45,7 +45,8 @@ const reservationController = {
             });
 
             if (!reservation) {
-                return res.status(404).json({ error: "Reservation not found" });
+                res.status(404).json({ error: "Reservation not found" });
+                return;
             }
 
             res.status(200).json(reservation);
@@ -75,7 +76,8 @@ const reservationController = {
             });
 
             if (!userReservation) {
-                return res.status(404).json({ error: "Reservation not found" });
+                res.status(404).json({ error: "Reservation not found" });
+                return;
             }
 
             res.status(200).json(userReservation);
@@ -137,7 +139,7 @@ const reservationController = {
                     tableId: null, // Ensure the table is not already set
                 },
                 data: {
-                    tableId: String(tableId),
+                    tableId: String(tableId) || null,
                 },
             });
 
@@ -211,3 +213,5 @@ const reservationController = {
         }
     }
 }
+
+export default reservationController;
