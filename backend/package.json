@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma:reset": "npx prisma migrate reset",
+    "postinstall": "prisma generate",
+    "commento": "Dopo install con il postinstall mi genera il client Prisma con il modello dati." 
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

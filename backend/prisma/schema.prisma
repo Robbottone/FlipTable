@@ -53,18 +53,26 @@ model TableGroup {
   orders    Order[]  // un gruppo può avere più ordini
 }
 
-
+enum ReservationStatus {
+  CREATED
+  CONFIRMED
+  DELAYED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
 
 model Reservation {
-  id         String   @id @default(cuid())
-  tenantId   String
-  tableId    String
-  userId     String?
-  name       String
-  phone      String
-  people     Int
+  id              String   @id @default(cuid())
+  tenantId        String
+  tableId         String
+  userId          String?
+  name            String
+  phone           String
+  people          Int
   reservationTime DateTime
-  status     String
+  crationTime     DateTime @default(now())
+  status          ReservationStatus @default(CREATED)
 
   tenant  Tenant  @relation(fields: [tenantId], references: [id])
   table   Table   @relation(fields: [tableId], references: [id])
@@ -77,6 +85,10 @@ model User {
   tenantId    String
   role        String
   email       String   @unique
+  firstName   String
+  lastName    String
+  phone       String?
+  nickaname   String?
   passwordHash String
 
   tenant       Tenant     @relation(fields: [tenantId], references: [id])
@@ -89,6 +101,7 @@ model Order {
   tenantId       String
   tableGroupId   String
   reservationId  String?
+  sessionCode    String?
   userId         String?
   status         String
   totalAmount    Float
@@ -96,10 +109,10 @@ model Order {
   notes          String?
   createdAt      DateTime @default(now())
 
-  tenant       Tenant       @relation(fields: [tenantId], references: [id])
-  reservation  Reservation? @relation(fields: [reservationId], references: [id])
-  user         User?        @relation(fields: [userId], references: [id])
-  tableGroup   TableGroup   @relation(fields: [tableGroupId], references: [groupId])
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  reservation  Reservation?  @relation(fields: [reservationId], references: [id])
+  user         User?         @relation(fields: [userId], references: [id])
+  tableGroup   TableGroup?   @relation(fields: [tableGroupId], references: [groupId])
   items        OrderItem[]
 }
 
