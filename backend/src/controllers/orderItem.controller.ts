@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 import { prisma } from '../../prisma/client';
 import { TenantRequest } from 'src/types/typedRequest';
+import { Order } from '@prisma/client';
 
 const orderItemController = {
   addOrderItem: async (req: Request, res: Response) => {
@@ -41,6 +42,7 @@ const orderItemController = {
           ? orderItem.notes.concat("\n-", notes)
           : '-'.concat("\n-", notes);
       }
+
       res
           .status(201)
           .json({ 
@@ -50,6 +52,10 @@ const orderItemController = {
 
     } else {
       try {
+
+        //l'array items presente in order, viene aggiornato quando associo all'orderItem l'orderId.
+        //la gestione dell'array viene gestita in automatico grazie alla relazione
+        // Order    @relation(fields: [orderId], references: [id])
         const orderItem = await prisma.orderItem.create({
           data: {
             orderId,
@@ -58,27 +64,31 @@ const orderItemController = {
             notes: notes ?? '',
           }
         });
-        
-        // TODO: come faccio ad aggiungere un item all order 
-        // se nella tabella Order non ce un riferimento agli Items?
-        
-        // order.items.push(orderItem);
 
-        // const updatedOrder = await prisma.order.update({
-        //   where: {
-        //     id: orderId
-        //   },
-        //   data: {
-        //     item_id: orderItem.id
-        //   }
-        // })
+        const orderUpdated = await prisma.order.findUnique({
+          where: {
+            id: orderId
+          }, include: {
+            items: true
+          }
+        })
 
-        res
-          .status(201)
-          .json({ 
-            message: 'Order Item updated',
-            data: { order, orderItem}
-          });
+        if (!orderUpdated || orderUpdated.items.length == 0) {
+          res.status(400).json({code: "0X", message: "ordine indicato non e' stato trovato dopo aggiornamento"})
+        }
+
+        if(orderUpdated!.items.some(el => el.id == orderItem.id)) {
+            res.status(201)
+               .json({ 
+                      message: 'Order Item updated',
+                      data: { orderItems: orderUpdated?.items }
+                });
+            
+            return;
+        }
+
+        res.status(400).json({code: "0X", message: "Ordine non contiene il nuovo elemento"})
+      
       } catch (error) {
         console.error("Error updating order:", error);
         res.status(500).json({ error: "Failed to update order" });
