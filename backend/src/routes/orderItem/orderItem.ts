@@ -5,5 +5,7 @@ import  orderItemController from '../../controllers/orderItem.controller';
 const orderItemRoute = Router();
 
 orderItemRoute.post('/add-order-item', tenantLoader, orderItemController.addOrderItem);
+orderItemRoute.delete('/delete-order-item', tenantLoader, orderItemController.deleteOrderItem);
+orderItemRoute.put('/update-order-item', tenantLoader, orderItemController.updateOrderItem);
 
 export default orderItemRoute;

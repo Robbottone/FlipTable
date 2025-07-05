@@ -100,12 +100,11 @@ const orderItemController = {
 
     const itemFound = await prisma.orderItem.findUnique({ where: { id: orderItemId }});
 
-
     if(itemFound) {
 
       await prisma.orderItem.delete({
         where: {
-        id: orderItemId
+          id: orderItemId
         }
       });
 
