@@ -1,7 +1,6 @@
 import { Response, Request } from 'express';
 import { prisma } from '../../prisma/client';
 import { TenantRequest } from 'src/types/typedRequest';
-import { Order } from '@prisma/client';
 
 const orderItemController = {
   addOrderItem: async (req: Request, res: Response) => {
@@ -93,6 +92,27 @@ const orderItemController = {
         console.error("Error updating order:", error);
         res.status(500).json({ error: "Failed to update order" });
       }
+    }
+  },
+  deleteOrderItem: async (req: Request, res: Response) => {
+    //se elimino direttamente l'orderItem con l'id  allora la relazione del DB va a gestire l'array di items in order
+    const { orderItemId } = req.query as { orderItemId: string }
+
+    const itemFound = await prisma.orderItem.findUnique({ where: { id: orderItemId }});
+
+
+    if(itemFound) {
+
+      await prisma.orderItem.delete({
+        where: {
+        id: orderItemId
+        }
+      });
+
+      res.status(200).json({code: "0X", message: "OrderItem cancellato con successo"});
+    } 
+    else {
+      res.status(400).json({code: "9X", message: "OrderItem non trovato, non e' stato possibile cancellare l'item"})
     }
   }
 }
