@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import  tableController  from '../../controllers/table.controller';
-import { tenantLoader } from 'src/middleware/tenantLoader/tenantLoader';
+import { tenantLoader } from '../../middleware/tenantLoader/tenantLoader';
 
 const tableRouter = Router();
 
