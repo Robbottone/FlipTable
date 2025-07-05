@@ -114,6 +114,37 @@ const orderItemController = {
     else {
       res.status(400).json({code: "9X", message: "OrderItem non trovato, non e' stato possibile cancellare l'item"})
     }
+  },
+  updateOrderItem: async (req: Request, res: Response) => {
+    const { orderItemId, notes, quantity} = req.body as {orderItemId: string, notes: string, quantity: number };
+
+    if (orderItemId.trim() == "" || ((!notes || notes.trim() == "") && (!quantity || quantity <= 0))) {
+      res.status(400).json({code: "9X", message: "i dati forniti non sono validi"});
+      return;
+    }
+
+    // qui devo comporre l'oggetto data, che sara' un any, dove eventualmente aggiungo le prop
+    const dataToAdd: any = {};
+
+    if (notes && notes.trim() != '') {
+      dataToAdd.notes = notes;
+    } 
+    
+    if (quantity) {
+      if(quantity <= 0) {
+        res.status(400).json({ code: "9X", message: "La quantita per un orderItem non pue' essere minore o uguale a zero"})
+      }
+
+      dataToAdd.quantity = quantity;
+    }
+
+    const udpatedElement = await prisma.orderItem.update({
+      where: { id: orderItemId },
+      data: dataToAdd
+    })
+
+    //potrei controllare che le cose sono state modificate correttamente, ma mi sembra un po inutile per la q.ta di codice
+    res.status(200).json({ code: "0X", message: "elemento aggiornato", orderItem: udpatedElement.id })
   }
 }
 
