@@ -1,0 +1,35 @@
+{
+    "NOT_FOUND": {
+        "MENU": {
+            "code": "05",
+            "messageId": "error.notfound.menu",
+            "status": "404"
+        }
+    },
+    "BAD_REQUEST": {
+        "MENU_NAME": {
+            "code": "10",
+            "messageId": "error.badrequest.menuName",
+            "status": "400"
+        },
+        "MENU_IDS": {
+            "code": "11",
+            "messageId": "error.badrequest.menuIds",
+            "status": "400"
+        }
+    },
+    "CONFLICT": {
+        "MENU_NAME_EXISTS": {
+            "code": "20",
+            "messageId": "error.conflict.menuNameExists",
+            "status": "409"
+        }
+    },
+    "SUCCESS": {
+        "MENU_CREATED": {
+            "code": "00",
+            "messageId": "success.menu.created",
+            "status": "201"
+        }
+    }
+}
